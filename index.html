@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home — Pizzaria Do Gordo</title>
+    <script>
+        // lê a direção salva (vt-dir) antes da página desenhar, pra saber
+        // de que lado o slide deve entrar — some em seguida
+        (function () {
+            var dir = sessionStorage.getItem("vt-dir");
+            if (dir === "back") document.documentElement.classList.add("vt-back");
+            sessionStorage.removeItem("vt-dir");
+        })();
+    </script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* dados do horário — específico desta página (roda de fatias) */
+        .wheel-ring{
+            background: conic-gradient(
+                var(--tomato)   0deg     51.43deg,   /* SEG jantar */
+                var(--dot-off)  51.43deg 102.86deg,  /* TER jantar */
+                var(--tomato)   102.86deg 154.29deg, /* QUA jantar */
+                var(--tomato)   154.29deg 205.71deg, /* QUI jantar */
+                var(--tomato)   205.71deg 257.14deg, /* SEX jantar */
+                var(--tomato)   257.14deg 308.57deg, /* SAB jantar */
+                var(--tomato)   308.57deg 360deg      /* DOM jantar */
+            );
+        }
+        .wheel-inner{
+            background: conic-gradient(
+                var(--ember)    0deg     51.43deg,   /* SEG almoço */
+                var(--ember)    51.43deg 102.86deg,  /* TER almoço */
+                var(--ember)    102.86deg 154.29deg, /* QUA almoço */
+                var(--ember)    154.29deg 205.71deg, /* QUI almoço */
+                var(--ember)    205.71deg 257.14deg, /* SEX almoço */
+                var(--ember)    257.14deg 308.57deg, /* SAB almoço */
+                var(--dot-off)  308.57deg 360deg      /* DOM almoço */
+            );
+        }
+        :root{ --dot-off: #5b4a38; }
+        .wheel-label span{ transform: translate(-50%,-50%) rotate(var(--a)) translateY(-198px) rotate(calc(-1 * var(--a))); }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="wrap">
+        <div class="brand">
+            <div class="brand-badge"><img src="imgs/crop_logo.jpg" alt="Logo Pizzaria do Gordo"></div>
+            <div class="brand-text">Pizzaria do Gordo<span>Novo Horizonte · SP</span></div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html" class="is-active"><button>Home</button></a></li>
+                <li><a href="cardapio.html"><button>Cardápio</button></a></li>
+                <li><a href="avaliações.html"><button>Avaliações</button></a></li>
+                <li><a href="contato.html"><button>Contato</button></a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="wrap">
+        <div class="hero-copy">
+            <p class="eyebrow hero-eyebrow">Forno à lenha · Centro de Novo Horizonte</p>
+            <h1>Sabor que encanta,<br><em>momentos que ficam.</em></h1>
+            <p class="hero-tagline">Massa fresquinha todo dia, ingredientes selecionados e aquele ponto de fumaça que só a lenha dá. É o Chefe André tocando o forno, do jeito que pizza boa tem que ser.</p>
+            <ul class="hero-meta">
+                <li>📍 Praça 9 de Julho, 26 — Centro</li>
+                <li>🔥 Forno a lenha, todo dia</li>
+                <li>🥟 Pastel frito na hora</li>
+            </ul>
+            <div class="hero-ctas">
+                <a href="cardapio.html"><button class="btn btn-primary">Ver cardápio</button></a>
+                <a href="https://wa.me/5517997795847" target="_blank"><button class="btn btn-ghost">Chamar no WhatsApp</button></a>
+            </div>
+        </div>
+        <div class="hero-photo">
+            <div class="hero-photo-frame">
+                <img src="imgs/crop_cheesepull.jpg" alt="Fatia de pizza da Pizzaria do Gordo com queijo derretendo">
+            </div>
+            <div class="hero-chip">
+                <strong>12</strong>
+                <span>sabores<br>no forno</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sobre">
+    <div class="wrap">
+        <div class="sobre-copy">
+            <p class="eyebrow sobre-eyebrow">Quem faz a massa</p>
+            <h2>A única pizzaria de Novo Horizonte<br><em>com forno à lenha de verdade.</em></h2>
+            <p>Servimos almoço de segunda a sábado, das 11h às 14h, e abrimos para o jantar de quarta a segunda, a partir das 18h. Sem atalho: massa fermentada com carinho e assada na lenha, do jeito que a tradição pede. Venha experimentar!</p>
+            <div class="sobre-signature">
+                <div class="line"></div>
+                <div>
+                    <span>André</span>
+                    <small>Chefe &amp; fundador</small>
+                </div>
+            </div>
+        </div>
+        <figure class="polaroid">
+            <img src="imgs/crop_margherita.jpg" alt="Pizza margherita com manjericão fresco, tomate e queijo derretido">
+            <figcaption>fresquinha, direto do forno</figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="horarios">
+    <div class="wrap">
+        <div class="horarios-copy">
+            <p class="eyebrow horarios-eyebrow">Quando abrimos</p>
+            <h2>Uma fatia pra cada dia<br><em>da semana.</em></h2>
+            <p>Almoço de segunda a sábado. Jantar de quarta a segunda. Domingo é só à noite — e terça é o único dia de descanso do forno.</p>
+            <ul class="legenda">
+                <li><span class="dot dot-almoco"></span> Almoço — 11h às 14h</li>
+                <li><span class="dot dot-jantar"></span> Jantar — a partir das 18h</li>
+                <li><span class="dot dot-off"></span> Fechado nesse turno</li>
+            </ul>
+        </div>
+        <div class="wheel-holder">
+            <div class="wheel">
+                <div class="wheel-ring"></div>
+                <div class="wheel-mask"></div>
+                <div class="wheel-inner"></div>
+                <div class="wheel-center"><span>Pizzaria<br>do Gordo</span></div>
+
+                <div class="wheel-label" style="--a:0deg"><span>SEG</span></div>
+                <div class="wheel-label" style="--a:51.43deg"><span>TER</span></div>
+                <div class="wheel-label" style="--a:102.86deg"><span>QUA</span></div>
+                <div class="wheel-label" style="--a:154.29deg"><span>QUI</span></div>
+                <div class="wheel-label" style="--a:205.71deg"><span>SEX</span></div>
+                <div class="wheel-label" style="--a:257.14deg"><span>SAB</span></div>
+                <div class="wheel-label" style="--a:308.57deg"><span>DOM</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="galeria">
+    <div class="wrap">
+        <div class="galeria-head">
+            <div>
+                <p class="eyebrow galeria-eyebrow">Da cozinha pra sua mesa</p>
+                <h2>O que sai do forno</h2>
+            </div>
+            <a href="cardapio.html">Ver cardápio completo →</a>
+        </div>
+        <div class="galeria-grid">
+            <figure>
+                <img src="imgs/crop_cheesepull.jpg" alt="Fatia de pizza de calabresa com queijo derretendo">
+                <figcaption>Calabresa especial</figcaption>
+            </figure>
+            <figure>
+                <img src="imgs/crop_margherita.jpg" alt="Pizza margherita com manjericão">
+                <figcaption>Margherita</figcaption>
+            </figure>
+            <figure>
+                <img src="imgs/crop_pepperoni.jpg" alt="Pizza de pepperoni fatiada">
+                <figcaption>Pepperoni</figcaption>
+            </figure>
+            <figure>
+                <img src="imgs/crop_pastel.jpg" alt="Pastéis fritos na hora">
+                <figcaption>Pastel na hora</figcaption>
+            </figure>
+        </div>
+    </div>
+</section>
+
+<section class="local">
+    <div class="wrap">
+        <div>
+            <p class="eyebrow local-eyebrow">Onde estamos</p>
+            <h2>Bem no Bancão, no coração do centro.</h2>
+            <address>
+                <strong>Praça 9 de Julho, 26 — Bancão</strong>
+                Centro, Novo Horizonte-SP<br>
+                (17) 99779-5847 — telefone e WhatsApp
+            </address>
+            <a href="contato.html"><button class="btn btn-primary">Como chegar</button></a>
+        </div>
+        <div class="map-card">
+            <iframe
+                src="https://www.google.com/maps?q=Pizzaria+do+Gordo,+Pra%C3%A7a+9+de+Julho,+26,+Novo+Horizonte-SP&output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <div class="footer-col">
+            <div class="footer-brand">
+                <div class="brand-badge"><img src="imgs/crop_logo.jpg" alt="Logo Pizzaria do Gordo"></div>
+                <span>Pizzaria do Gordo</span>
+            </div>
+            <p>Forno à lenha, massa fresquinha todo dia e o Chefe André tocando a cozinha desde sempre.</p>
+        </div>
+        <div class="footer-col">
+            <h3>Navegação</h3>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="cardapio.html">Cardápio</a></li>
+                <li><a href="avaliações.html">Avaliações</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Fale com a gente</h3>
+            <ul>
+                <li><a href="https://wa.me/5517997795847" target="_blank">WhatsApp — (17) 99779-5847</a></li>
+                <li><a href="https://www.instagram.com/pizzasgordonh" target="_blank">Instagram</a></li>
+                <li><a href="contato.html">Praça 9 de Julho, 26 — Centro</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="wrap footer-bottom">
+        <p>Pizzaria do Gordo · Novo Horizonte-SP</p>
+        <p>Chefe: André</p>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliações — Pizzaria Do Gordo</title>
+    <script>
+        // lê a direção salva (vt-dir) antes da página desenhar, pra saber
+        // de que lado o slide deve entrar — some em seguida
+        (function () {
+            var dir = sessionStorage.getItem("vt-dir");
+            if (dir === "back") document.documentElement.classList.add("vt-back");
+            sessionStorage.removeItem("vt-dir");
+        })();
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="wrap">
+        <div class="brand">
+            <div class="brand-badge"><img src="imgs/crop_logo.jpg" alt="Logo Pizzaria do Gordo"></div>
+            <div class="brand-text">Pizzaria do Gordo<span>Novo Horizonte · SP</span></div>
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html"><button>Home</button></a></li>
+                <li><a href="cardapio.html"><button>Cardápio</button></a></li>
+                <li><a href="avaliações.html" class="is-active"><button>Avaliações</button></a></li>
+                <li><a href="contato.html"><button>Contato</button></a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<section class="maintenance">
+    <div class="maintenance-card">
+        <span class="maintenance-icon">🛠️</span>
+        <h1>Área em <em>manutenção.</em></h1>
+        <p>Estamos preparando um jeito fácil de você deixar sua avaliação por aqui. Enquanto isso, manda seu feedback direto pra gente no WhatsApp!</p>
+        <a href="https://wa.me/5517997795847" target="_blank"><button class="btn btn-primary">Falar no WhatsApp</button></a>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="wrap">
+        <div class="footer-col">
+            <div class="footer-brand">
+                <div class="brand-badge"><img src="imgs/crop_logo.jpg" alt="Logo Pizzaria do Gordo"></div>
+                <span>Pizzaria do Gordo</span>
+            </div>
+            <p>Forno à lenha, massa fresquinha todo dia e o Chefe André tocando a cozinha desde sempre.</p>
+        </div>
+        <div class="footer-col">
+            <h3>Navegação</h3>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="cardapio.html">Cardápio</a></li>
+                <li><a href="avaliações.html">Avaliações</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h3>Fale com a gente</h3>
+            <ul>
+                <li><a href="https://wa.me/5517997795847" target="_blank">WhatsApp — (17) 99779-5847</a></li>
+                <li><a href="https://www.instagram.com/pizzasgordonh" target="_blank">Instagram</a></li>
+                <li><a href="contato.html">Praça 9 de Julho, 26 — Centro</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="wrap footer-bottom">
+        <p>Pizzaria do Gordo · Novo Horizonte-SP</p>
+        <p>Chefe: André</p>
+    </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

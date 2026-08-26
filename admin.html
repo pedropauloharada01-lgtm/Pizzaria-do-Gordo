@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Painel — Pizzaria Do Gordo</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-wrap{ max-width: 720px; margin: 0 auto; padding: 90px 24px 100px; }
+        .admin-card{
+            background: var(--paper);
+            border-radius: var(--radius);
+            padding: 34px 36px;
+            box-shadow: 0 20px 44px -22px rgba(42,22,8,.32);
+        }
+        .admin-card h1{
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--ink);
+        }
+        .admin-card p.hint{ color: var(--ink-soft); margin-top: 8px; font-size: .92rem; }
+        .campo{ margin-top: 20px; }
+        .campo label{
+            display:block;
+            font-family: var(--font-mono);
+            font-size: .74rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin-bottom: 6px;
+        }
+        .campo input{
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(42,22,8,.2);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            background: var(--cream);
+            color: var(--ink);
+        }
+        .campo input:focus{ outline: 2px solid var(--ember); outline-offset: 1px; }
+        .erro-login{
+            margin-top: 14px;
+            color: var(--tomato);
+            font-family: var(--font-mono);
+            font-size: .82rem;
+            display: none;
+        }
+        .admin-top{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap: 14px;
+            margin-bottom: 26px;
+            flex-wrap: wrap;
+        }
+        .admin-top h1{ margin: 0; }
+        .lista-pedidos{ display:flex; flex-direction:column; gap: 14px; }
+        .pedido-card{
+            background: var(--paper);
+            border-radius: 14px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 26px -18px rgba(42,22,8,.28);
+            border: 1px solid rgba(42,22,8,.06);
+        }
+        .pedido-card.atendido{ opacity: .55; }
+        .pedido-topo{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .pedido-data{
+            font-family: var(--font-mono);
+            font-size: .74rem;
+            color: var(--ink-soft);
+        }
+        .status-pill{
+            font-family: var(--font-mono);
+            font-size: .68rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 999px;
+        }
+        .status-pendente{ background: rgba(232,89,12,.15); color: var(--ember); }
+        .status-atendido{ background: rgba(91,74,56,.15); color: var(--ink-soft); }
+        .pedido-itens{ margin-top: 10px; display:flex; flex-direction:column; gap: 4px; }
+        .pedido-itens span{ font-size: .96rem; color: var(--ink); }
+        .pedido-acoes{ margin-top: 14px; }
+        .pedido-acoes button{
+            font-family: var(--font-mono);
+            font-size: .76rem;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+            padding: 7px 14px;
+            border-radius: 999px;
+            border: 2px solid var(--ember);
+            background: transparent;
+            color: var(--ember);
+        }
+        .pedido-acoes button:hover{ background: var(--ember); color: var(--paper); }
+        .vazio, .carregando{
+            font-family: var(--font-mono);
+            font-size: .88rem;
+            color: var(--ink-soft);
+            padding: 30px 0;
+            text-align:center;
+        }
+    </style>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="wrap">
+        <div class="brand">
+            <div class="brand-badge"><img src="imgs/crop_logo.jpg" alt="Logo Pizzaria do Gordo"></div>
+            <div class="brand-text">Pizzaria do Gordo<span>Painel administrativo</span></div>
+        </div>
+    </div>
+</header>
+
+<div class="admin-wrap">
+
+    <!-- tela de login -->
+    <div class="admin-card" id="tela-login">
+        <h1>Entrar no painel</h1>
+        <p class="hint">Use o e-mail e a senha cadastrados no Supabase pra você.</p>
+        <div class="campo">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" autocomplete="username">
+        </div>
+        <div class="campo">
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" autocomplete="current-password">
+        </div>
+        <p class="erro-login" id="erro-login">E-mail ou senha incorretos.</p>
+        <div style="margin-top:24px;">
+            <button class="btn btn-primary" onclick="entrar()">Entrar</button>
+        </div>
+    </div>
+
+    <!-- tela de pedidos (some até logar) -->
+    <div id="tela-pedidos" style="display:none;">
+        <div class="admin-top">
+            <h1 style="font-family:var(--font-display);font-weight:800;font-size:1.6rem;color:var(--ink);">Pedidos</h1>
+            <button class="btn btn-outline" style="color:var(--ink);border-color:var(--ink);" onclick="sair()">Sair</button>
+        </div>
+        <div class="lista-pedidos" id="lista-pedidos">
+            <p class="carregando">Carregando pedidos...</p>
+        </div>
+    </div>
+
+</div>
+
+<script src="supabase-config.js"></script>
+<script>
+    function chaveConfigurada() {
+        return (
+            typeof SUPABASE_URL !== "undefined" &&
+            typeof SUPABASE_ANON_KEY !== "undefined" &&
+            !SUPABASE_URL.includes("COLE_AQUI") &&
+            !SUPABASE_ANON_KEY.includes("COLE_AQUI")
+        );
+    }
+
+    async function entrar() {
+        const email = document.getElementById("email").value.trim();
+        const senha = document.getElementById("senha").value;
+        const erro = document.getElementById("erro-login");
+        erro.style.display = "none";
+
+        if (!chaveConfigurada()) {
+            alert("O arquivo supabase-config.js ainda não foi preenchido com as chaves do projeto Supabase.");
+            return;
+        }
+
+        try {
+            const resp = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+                method: "POST",
+                headers: { apikey: SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password: senha })
+            });
+            const dados = await resp.json();
+            if (!resp.ok || !dados.access_token) {
+                erro.style.display = "block";
+                return;
+            }
+            sessionStorage.setItem("admin-token", dados.access_token);
+            mostrarPedidos();
+        } catch (e) {
+            erro.textContent = "Não consegui conectar. Verifique sua internet e tente de novo.";
+            erro.style.display = "block";
+        }
+    }
+
+    function sair() {
+        sessionStorage.removeItem("admin-token");
+        document.getElementById("tela-pedidos").style.display = "none";
+        document.getElementById("tela-login").style.display = "block";
+    }
+
+    async function mostrarPedidos() {
+        const token = sessionStorage.getItem("admin-token");
+        if (!token) return;
+
+        document.getElementById("tela-login").style.display = "none";
+        document.getElementById("tela-pedidos").style.display = "block";
+
+        const container = document.getElementById("lista-pedidos");
+        container.innerHTML = '<p class="carregando">Carregando pedidos...</p>';
+
+        try {
+            const resp = await fetch(`${SUPABASE_URL}/rest/v1/pedidos?select=*&order=criado_em.desc`, {
+                headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` }
+            });
+            if (!resp.ok) {
+                container.innerHTML = '<p class="vazio">Sessão expirada — clique em "Sair" e entre de novo.</p>';
+                return;
+            }
+            const pedidos = await resp.json();
+
+            if (pedidos.length === 0) {
+                container.innerHTML = '<p class="vazio">Nenhum pedido ainda.</p>';
+                return;
+            }
+
+            container.innerHTML = "";
+            pedidos.forEach(function (pedido) {
+                const div = document.createElement("div");
+                div.className = "pedido-card" + (pedido.status === "atendido" ? " atendido" : "");
+
+                const data = new Date(pedido.criado_em).toLocaleString("pt-BR", {
+                    day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
+                });
+
+                const itensHtml = pedido.itens
+                    .map(function (item) { return `<span>${item.quantidade}x ${item.nome}</span>`; })
+                    .join("");
+
+                div.innerHTML = `
+                    <div class="pedido-topo">
+                        <span class="pedido-data">${data}</span>
+                        <span class="status-pill status-${pedido.status}">${pedido.status}</span>
+                    </div>
+                    <div class="pedido-itens">${itensHtml}</div>
+                    <div class="pedido-acoes">
+                        ${pedido.status === "pendente"
+                            ? `<button onclick="marcarAtendido(${pedido.id})">Marcar como atendido</button>`
+                            : ""}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        } catch (e) {
+            container.innerHTML = '<p class="vazio">Não consegui carregar os pedidos agora.</p>';
+        }
+    }
+
+    async function marcarAtendido(id) {
+        const token = sessionStorage.getItem("admin-token");
+        await fetch(`${SUPABASE_URL}/rest/v1/pedidos?id=eq.${id}`, {
+            method: "PATCH",
+            headers: {
+                apikey: SUPABASE_ANON_KEY,
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json",
+                Prefer: "return=minimal"
+            },
+            body: JSON.stringify({ status: "atendido" })
+        });
+        mostrarPedidos();
+    }
+
+    // se já tinha logado nessa sessão do navegador, pula direto pra lista
+    if (sessionStorage.getItem("admin-token")) {
+        mostrarPedidos();
+    }
+</script>
+
+</body>
+</html>
