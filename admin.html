@@ -91,6 +91,7 @@
         .status-atendido{ background: rgba(91,74,56,.15); color: var(--ink-soft); }
         .pedido-itens{ margin-top: 10px; display:flex; flex-direction:column; gap: 4px; }
         .pedido-itens span{ font-size: .96rem; color: var(--ink); }
+        .pedido-total{ margin-top: 8px; font-family: var(--font-mono); font-weight: 700; font-size: .88rem; color: var(--tomato); }
         .pedido-acoes{ margin-top: 14px; }
         .pedido-acoes button{
             font-family: var(--font-mono);
@@ -239,8 +240,17 @@
                 });
 
                 const itensHtml = pedido.itens
-                    .map(function (item) { return `<span>${item.quantidade}x ${item.nome}</span>`; })
+                    .map(function (item) {
+                        const tamanho = item.tamanho ? ` (${item.tamanho})` : "";
+                        const preco = item.precoUnit
+                            ? ` — R$ ${(item.precoUnit * item.qtd).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
+                            : "";
+                        return `<span>${item.qtd}x ${item.nome}${tamanho}${preco}</span>`;
+                    })
                     .join("");
+                const totalHtml = pedido.total
+                    ? `<p class="pedido-total">Total: R$ ${Number(pedido.total).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>`
+                    : "";
 
                 div.innerHTML = `
                     <div class="pedido-topo">
@@ -248,6 +258,7 @@
                         <span class="status-pill status-${pedido.status}">${pedido.status}</span>
                     </div>
                     <div class="pedido-itens">${itensHtml}</div>
+                    ${totalHtml}
                     <div class="pedido-acoes">
                         ${pedido.status === "pendente"
                             ? `<button onclick="marcarAtendido(${pedido.id})">Marcar como atendido</button>`

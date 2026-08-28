@@ -27,7 +27,7 @@
             <ul>
                 <li><a href="index.html"><button>Home</button></a></li>
                 <li><a href="cardapio.html" class="is-active"><button>Cardápio</button></a></li>
-                <li><a href="avaliações.html"><button>Avaliações</button></a></li>
+                <li><a href="avaliacoes.html"><button>Avaliações</button></a></li>
                 <li><a href="contato.html"><button>Contato</button></a></li>
             </ul>
         </nav>
@@ -38,53 +38,28 @@
     <div class="wrap">
         <p class="eyebrow">Cardápio</p>
         <h1>Monte seu <em>pedido.</em></h1>
-        <p>Escolha os itens, ajuste as quantidades com os botões e clique em "Fazer pedido" — a gente já deixa tudo pronto pra você confirmar no WhatsApp.</p>
+        <p>Use a busca pra achar rapidinho o que quer, ou navegue pelas categorias. Ajuste as quantidades e, quando terminar, toque em "Fazer pedido" lá embaixo.</p>
     </div>
 </section>
 
 <section class="menu-section">
     <div class="wrap">
-        <div class="menu-section-head">
-            <p class="eyebrow">Pizzas &amp; salgados</p>
-            <h2>O que vai pro forno hoje</h2>
+
+        <div class="busca-wrap">
+            <input type="search" id="busca-cardapio" placeholder="Buscar no cardápio... (ex: calabresa, pastel, refrigerante)">
         </div>
 
-        <ul class="menu-list">
+        <nav class="cat-nav" id="cardapio-nav" aria-label="Categorias do cardápio"></nav>
 
-            <li class="menu-item" id="P1">
-                <p class="menu-item-name">Pizza de queijo<small>Massa fina, forno à lenha</small></p>
-                <div class="stepper">
-                    <button onclick="remove(1)" aria-label="Diminuir quantidade">−</button>
-                    <p class="qty" id="unidade1">0</p>
-                    <button onclick="add(1)" aria-label="Aumentar quantidade">+</button>
-                </div>
-            </li>
+        <div id="cardapio-container"></div>
 
-            <li class="menu-item" id="P2">
-                <p class="menu-item-name">Pastel de carne<small>Frito na hora</small></p>
-                <div class="stepper">
-                    <button onclick="remove(2)" aria-label="Diminuir quantidade">−</button>
-                    <p class="qty" id="unidade2">0</p>
-                    <button onclick="add(2)" aria-label="Aumentar quantidade">+</button>
-                </div>
-            </li>
-
-            <li class="menu-item" id="P3">
-                <p class="menu-item-name">Pizza de calabresa<small>Massa fina, forno à lenha</small></p>
-                <div class="stepper">
-                    <button onclick="remove(3)" aria-label="Diminuir quantidade">−</button>
-                    <p class="qty" id="unidade3">0</p>
-                    <button onclick="add(3)" aria-label="Aumentar quantidade">+</button>
-                </div>
-            </li>
-
-        </ul>
-
-        <p class="menu-note">O carrinho fica salvo mesmo se você recarregar a página. Quando finalizar, o resumo aparece na página de Contato pra você copiar e confirmar no WhatsApp.</p>
     </div>
 </section>
 
-<div id="btn-flutuante">
+<div id="carrinho-flutuante" class="vazio">
+    <div class="carrinho-info">
+        <span id="carrinho-contagem">0</span> item(ns) · <span id="carrinho-total">R$ 0,00</span>
+    </div>
     <button onclick="finalizarPedido()">Fazer pedido</button>
 </div>
 
@@ -95,14 +70,14 @@
                 <div class="brand-badge"><img src="imgs/crop_logo.jpg" alt="Logo Pizzaria do Gordo"></div>
                 <span>Pizzaria do Gordo</span>
             </div>
-            <p>Forno à lenha, massa fresquinha todo dia e o Chefe André tocando a cozinha desde sempre.</p>
+            <p>Massa fresquinha todo dia e o Chefe André tocando a cozinha desde sempre.</p>
         </div>
         <div class="footer-col">
             <h3>Navegação</h3>
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="cardapio.html">Cardápio</a></li>
-                <li><a href="avaliações.html">Avaliações</a></li>
+                <li><a href="avaliacoes.html">Avaliações</a></li>
                 <li><a href="contato.html">Contato</a></li>
             </ul>
         </div>
@@ -122,6 +97,7 @@
 </footer>
 
 <script src="supabase-config.js"></script>
+<script src="cardapio-dados.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
