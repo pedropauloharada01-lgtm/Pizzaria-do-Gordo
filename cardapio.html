@@ -45,14 +45,61 @@
 <section class="menu-section">
     <div class="wrap">
 
-        <div class="busca-wrap">
-            <input type="search" id="busca-cardapio" placeholder="Buscar no cardápio... (ex: calabresa, pastel, refrigerante)">
+        <!-- Aba inicial: escolher entre pizza de sabor único ou misturar sabores -->
+        <div id="pizza-hub" class="pizza-hub">
+            <div class="pizza-hub-head">
+                <p class="eyebrow">Pizzas</p>
+                <h2>Como você quer montar sua pizza?</h2>
+            </div>
+            <div class="pizza-hub-botoes">
+                <button type="button" class="hub-botao" onclick="mostrarModoPizza('unicos')">
+                    <span class="hub-botao-titulo">🍕 Sabores Únicos</span>
+                    <span class="hub-botao-desc">O cardápio de pizzas normal, um sabor por pizza.</span>
+                </button>
+                <button type="button" class="hub-botao" onclick="mostrarModoPizza('mistura')">
+                    <span class="hub-botao-titulo">🍕🍕 Misturar Sabores</span>
+                    <span class="hub-botao-desc">Combine de 2 a 4 sabores na mesma pizza.</span>
+                </button>
+            </div>
         </div>
 
-        <nav class="cat-nav" id="cardapio-nav" aria-label="Categorias do cardápio"></nav>
+        <!-- Modo: sabores únicos -->
+        <div id="modo-unicos" class="modo-oculto">
+            <button type="button" class="voltar-hub" onclick="voltarHubPizza()">← Voltar</button>
+            <div class="busca-wrap">
+                <input type="search" id="busca-pizza" placeholder="Buscar uma pizza... (ex: calabresa, frango, atum)">
+            </div>
+            <nav class="cat-nav" id="pizza-cardapio-nav" aria-label="Categorias de pizza"></nav>
+            <div id="pizza-cardapio-container"></div>
+        </div>
+
+        <!-- Modo: misturar sabores -->
+        <div id="modo-mistura" class="modo-oculto">
+            <button type="button" class="voltar-hub" onclick="voltarHubPizza()">← Voltar</button>
+            <div class="mistura-intro">
+                <h2>Monte sua pizza com até 4 sabores</h2>
+                <p>Escolha o tamanho e os sabores. O valor cobrado é o do sabor mais caro escolhido — a mesma regra do meio a meio.</p>
+            </div>
+            <div id="mistura-container"></div>
+        </div>
+
+    </div>
+</section>
+
+<section class="menu-section menu-section-outras">
+    <div class="wrap">
+        <div class="menu-section-head">
+            <p class="eyebrow">Mais do cardápio</p>
+            <h2>Bordas, calzones, bebidas e mais</h2>
+        </div>
+
+        <div class="busca-wrap">
+            <input type="search" id="busca-cardapio" placeholder="Buscar no resto do cardápio... (ex: pastel, refrigerante, borda)">
+        </div>
+
+        <nav class="cat-nav" id="cardapio-nav" aria-label="Outras categorias do cardápio"></nav>
 
         <div id="cardapio-container"></div>
-
     </div>
 </section>
 
@@ -60,7 +107,10 @@
     <div class="carrinho-info">
         <span id="carrinho-contagem">0</span> item(ns) · <span id="carrinho-total">R$ 0,00</span>
     </div>
-    <button onclick="finalizarPedido()">Fazer pedido</button>
+    <div class="carrinho-acoes">
+        <button type="button" class="btn-desfazer" onclick="removerUltimoItem()">↩ Remover último</button>
+        <button onclick="finalizarPedido()">Fazer pedido</button>
+    </div>
 </div>
 
 <footer class="site-footer">

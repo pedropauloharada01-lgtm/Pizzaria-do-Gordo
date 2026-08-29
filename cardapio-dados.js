@@ -324,3 +324,10 @@ const CARDAPIO = [
         ]
     }
 ];
+
+// Categorias que são pizzas "de verdade" (têm Brotinho/Grande) — usado
+// pela área de "Misturar Sabores" pra montar a lista de sabores disponíveis.
+const CATEGORIAS_PIZZA_IDS = [
+    "atum", "carne", "calabresa", "presunto", "frango",
+    "lombo", "queijo", "vegetais", "doces"
+];
