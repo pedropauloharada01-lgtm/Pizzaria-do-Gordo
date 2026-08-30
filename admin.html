@@ -160,6 +160,49 @@
 
 <script src="supabase-config.js"></script>
 <script>
+    // mesmo dicionário de tipo de alimento usado no site público, pra
+    // exibir os pedidos com a mesma frase ("2x de mini-pizzas de atum")
+    const TIPO_ALIMENTO = {
+        atum: { s: "pizza", p: "pizzas" },
+        carne: { s: "pizza", p: "pizzas" },
+        calabresa: { s: "pizza", p: "pizzas" },
+        presunto: { s: "pizza", p: "pizzas" },
+        frango: { s: "pizza", p: "pizzas" },
+        lombo: { s: "pizza", p: "pizzas" },
+        queijo: { s: "pizza", p: "pizzas" },
+        vegetais: { s: "pizza", p: "pizzas" },
+        doces: { s: "pizza", p: "pizzas" },
+        mistura: { s: "pizza mista", p: "pizzas mistas" },
+        bordas: { s: "borda recheada", p: "bordas recheadas" },
+        "mini-pizza": { s: "mini-pizza", p: "mini-pizzas" },
+        "mini-pizza-doce": { s: "mini-pizza doce", p: "mini-pizzas doces" },
+        calzone: { s: "calzone", p: "calzones" },
+        "calzone-doce": { s: "calzone doce", p: "calzones doces" },
+        "mini-calzone": { s: "mini calzone", p: "mini calzones" },
+        "mini-calzone-doce": { s: "mini calzone doce", p: "mini calzones doces" },
+        batata: { s: "batata recheada", p: "batatas recheadas" },
+        pasteis: { s: "pastel", p: "pastéis" }
+    };
+    const CATEGORIAS_SEM_SABOR = ["bebidas", "cervejas", "adicionais"];
+
+    function descreverItemPedido(item) {
+        const tamanho = item.tamanho ? ` (${item.tamanho})` : "";
+        const tipo = TIPO_ALIMENTO[item.categoria];
+
+        if (!tipo || CATEGORIAS_SEM_SABOR.includes(item.categoria)) {
+            return `${item.qtd}x ${item.nome}${tamanho}`;
+        }
+
+        const alimento = item.qtd === 1 ? tipo.s : tipo.p;
+
+        if (item.categoria === "mistura") {
+            const sabores = item.nome.replace(/^Pizza mista:\s*/, "");
+            return `${item.qtd}x de ${alimento} de ${sabores}${tamanho}`;
+        }
+
+        return `${item.qtd}x de ${alimento} de ${item.nome}${tamanho}`;
+    }
+
     function chaveConfigurada() {
         return (
             typeof SUPABASE_URL !== "undefined" &&
@@ -241,11 +284,10 @@
 
                 const itensHtml = pedido.itens
                     .map(function (item) {
-                        const tamanho = item.tamanho ? ` (${item.tamanho})` : "";
                         const preco = item.precoUnit
                             ? ` — R$ ${(item.precoUnit * item.qtd).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
                             : "";
-                        return `<span>${item.qtd}x ${item.nome}${tamanho}${preco}</span>`;
+                        return `<span>${descreverItemPedido(item)}${preco}</span>`;
                     })
                     .join("");
                 const totalHtml = pedido.total

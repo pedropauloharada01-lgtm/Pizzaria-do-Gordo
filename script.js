@@ -76,7 +76,7 @@ function renderizarCardapio() {
     const outrasCategorias = CARDAPIO.filter(function (c) { return !CATEGORIAS_PIZZA_IDS.includes(c.id); });
 
     renderizarCategorias(pizzaCategorias, "pizza-cardapio-container", "pizza-cardapio-nav");
-    renderizarCategorias(outrasCategorias, "cardapio-container", "cardapio-nav");
+    renderizarCategorias(outrasCategorias, "cardapio-container", null);
 
     Object.keys(carrinho).forEach(function (chave) {
         atualizarQtdNaTela(chave, carrinho[chave].qtd);
@@ -84,15 +84,15 @@ function renderizarCardapio() {
 
     atualizarResumoFlutuante();
     configurarBusca("busca-pizza", "#pizza-cardapio-container");
-    configurarBusca("busca-cardapio", "#cardapio-container");
     renderizarMinhasMisturas();
+    montarAlimentoHub(outrasCategorias);
 }
 
 function renderizarCategorias(categorias, containerId, navId) {
     const container = document.getElementById(containerId);
     if (!container || typeof CARDAPIO === "undefined") return;
 
-    const navPills = document.getElementById(navId);
+    const navPills = navId ? document.getElementById(navId) : null;
 
     categorias.forEach(function (categoria) {
         if (navPills) {
@@ -144,7 +144,61 @@ function renderizarCategorias(categorias, containerId, navId) {
 }
 
 // ---------------------------------------------------------------------
-// Aba inicial: Sabores Únicos x Misturar Sabores
+// Hub principal: escolher o tipo de alimento (pizza, mini-pizza, pastel,
+// bebida etc). Pizza abre a aba própria (sabores únicos / misturar);
+// os demais mostram só a categoria escolhida, uma de cada vez.
+// ---------------------------------------------------------------------
+function montarAlimentoHub(outrasCategorias) {
+    const grid = document.getElementById("alimento-grid");
+    if (!grid) return;
+
+    let html = `
+        <button type="button" class="alimento-botao" onclick="mostrarPizzaHub()">
+            <span class="alimento-botao-titulo">🍕 Pizza</span>
+            <span class="alimento-botao-desc">Sabor único ou misturar até 4 sabores</span>
+        </button>
+    `;
+
+    outrasCategorias.forEach(function (categoria) {
+        html += `
+            <button type="button" class="alimento-botao" onclick="mostrarCategoriaUnica('${categoria.id}')">
+                <span class="alimento-botao-titulo">${categoria.nome}</span>
+                <span class="alimento-botao-desc">${categoria.itens.length} opç${categoria.itens.length === 1 ? "ão" : "ões"}</span>
+            </button>
+        `;
+    });
+
+    grid.innerHTML = html;
+}
+
+function esconderTudoNoCardapio() {
+    ["alimento-hub", "pizza-hub", "modo-unicos", "modo-mistura", "categoria-unica"].forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add("modo-oculto");
+    });
+}
+
+function voltarAlimentoHub() {
+    esconderTudoNoCardapio();
+    document.getElementById("alimento-hub").classList.remove("modo-oculto");
+}
+
+function mostrarPizzaHub() {
+    esconderTudoNoCardapio();
+    document.getElementById("pizza-hub").classList.remove("modo-oculto");
+}
+
+function mostrarCategoriaUnica(categoriaId) {
+    esconderTudoNoCardapio();
+    document.getElementById("categoria-unica").classList.remove("modo-oculto");
+    document.querySelectorAll("#cardapio-container .cat-section").forEach(function (secao) {
+        secao.style.display = (secao.id === `cat-${categoriaId}`) ? "" : "none";
+    });
+    window.scrollTo({ top: document.getElementById("categoria-unica").offsetTop - 90, behavior: "smooth" });
+}
+
+// ---------------------------------------------------------------------
+// Aba de pizza: Sabores Únicos x Misturar Sabores
 // ---------------------------------------------------------------------
 function mostrarModoPizza(modo) {
     const hub = document.getElementById("pizza-hub");
@@ -395,23 +449,25 @@ function renderizarMinhasMisturas() {
 }
 
 function linhaTamanho(chave, label, preco) {
-    const chaveCss = CSS.escape(chave);
     return `
         <div class="tamanho-linha">
             ${label ? `<span class="tamanho-label">${label}</span>` : `<span class="tamanho-label">Unidade</span>`}
             <span class="tamanho-preco">R$ ${formatarReal(preco)}</span>
             <div class="stepper-mini">
                 <button onclick="alterarQtd('${chave.replace(/'/g, "\\'")}', -1)" aria-label="Diminuir">−</button>
-                <span class="qty" data-chave-qty="${chaveCss}">0</span>
+                <span class="qty" data-chave-qty="${chave}">0</span>
                 <button onclick="alterarQtd('${chave.replace(/'/g, "\\'")}', 1)" aria-label="Aumentar">+</button>
             </div>
         </div>
     `;
 }
 
+// Compara em JS puro (em vez de montar um seletor CSS escapado) — evita
+// bugs de escaping com caracteres como ":", "(" e espaço nas chaves.
 function atualizarQtdNaTela(chave, valor) {
-    const el = document.querySelector(`[data-chave-qty="${CSS.escape(chave)}"]`);
-    if (el) el.textContent = valor;
+    document.querySelectorAll("[data-chave-qty]").forEach(function (el) {
+        if (el.dataset.chaveQty === chave) el.textContent = valor;
+    });
 }
 
 function alterarQtd(chave, delta) {
@@ -543,6 +599,54 @@ function salvarPedidoNoBanco(pedido) {
 }
 
 // ---------------------------------------------------------------------
+// Como cada item aparece escrito (resumo, WhatsApp, histórico, admin):
+// "2x de mini-pizzas de atum" — separa o tipo de alimento do sabor.
+// Bebidas/cervejas/adicionais não têm "sabor" separado, então usam o
+// nome do produto direto.
+// ---------------------------------------------------------------------
+const TIPO_ALIMENTO = {
+    atum: { s: "pizza", p: "pizzas" },
+    carne: { s: "pizza", p: "pizzas" },
+    calabresa: { s: "pizza", p: "pizzas" },
+    presunto: { s: "pizza", p: "pizzas" },
+    frango: { s: "pizza", p: "pizzas" },
+    lombo: { s: "pizza", p: "pizzas" },
+    queijo: { s: "pizza", p: "pizzas" },
+    vegetais: { s: "pizza", p: "pizzas" },
+    doces: { s: "pizza", p: "pizzas" },
+    mistura: { s: "pizza mista", p: "pizzas mistas" },
+    bordas: { s: "borda recheada", p: "bordas recheadas" },
+    "mini-pizza": { s: "mini-pizza", p: "mini-pizzas" },
+    "mini-pizza-doce": { s: "mini-pizza doce", p: "mini-pizzas doces" },
+    calzone: { s: "calzone", p: "calzones" },
+    "calzone-doce": { s: "calzone doce", p: "calzones doces" },
+    "mini-calzone": { s: "mini calzone", p: "mini calzones" },
+    "mini-calzone-doce": { s: "mini calzone doce", p: "mini calzones doces" },
+    batata: { s: "batata recheada", p: "batatas recheadas" },
+    pasteis: { s: "pastel", p: "pastéis" }
+};
+
+const CATEGORIAS_SEM_SABOR = ["bebidas", "cervejas", "adicionais"];
+
+function descreverItemPedido(item) {
+    const tamanho = item.tamanho ? ` (${item.tamanho})` : "";
+    const tipo = TIPO_ALIMENTO[item.categoria];
+
+    if (!tipo || CATEGORIAS_SEM_SABOR.includes(item.categoria)) {
+        return `${item.qtd}x ${item.nome}${tamanho}`;
+    }
+
+    const alimento = item.qtd === 1 ? tipo.s : tipo.p;
+
+    if (item.categoria === "mistura") {
+        const sabores = item.nome.replace(/^Pizza mista:\s*/, "");
+        return `${item.qtd}x de ${alimento} de ${sabores}${tamanho}`;
+    }
+
+    return `${item.qtd}x de ${alimento} de ${item.nome}${tamanho}`;
+}
+
+// ---------------------------------------------------------------------
 // Resumo do pedido na página de Contato
 // ---------------------------------------------------------------------
 function renderizarResumoPedido() {
@@ -557,9 +661,8 @@ function renderizarResumoPedido() {
 
     itens.forEach(function (item) {
         const linha = document.createElement("p");
-        const tamanho = item.tamanho ? ` (${item.tamanho})` : "";
         const subtotal = item.precoUnit ? ` — R$ ${formatarReal(item.precoUnit * item.qtd)}` : "";
-        linha.textContent = `${item.qtd}x ${item.nome}${tamanho}${subtotal}`;
+        linha.textContent = `${descreverItemPedido(item)}${subtotal}`;
         container.appendChild(linha);
     });
 
@@ -584,8 +687,7 @@ function montarLinkWhatsappComPedido(pedido) {
 
     let mensagem = "Olá! Gostaria de fazer o seguinte pedido:\n\n";
     itens.forEach(function (item) {
-        const tamanho = item.tamanho ? ` (${item.tamanho})` : "";
-        mensagem += `${item.qtd}x ${item.nome}${tamanho}\n`;
+        mensagem += `${descreverItemPedido(item)}\n`;
     });
     if (pedido.total) {
         mensagem += `\nTotal: R$ ${formatarReal(pedido.total)}`;
@@ -632,8 +734,7 @@ function configurarBotaoWhatsappPedido() {
 function formatarPedidoTexto(pedido) {
     let texto = "";
     pedido.itens.forEach(function (item) {
-        const tamanho = item.tamanho ? ` (${item.tamanho})` : "";
-        texto += `${item.qtd}x ${item.nome}${tamanho}\n`;
+        texto += `${descreverItemPedido(item)}\n`;
     });
     texto += `\nTotal: R$ ${formatarReal(pedido.total)}`;
     return texto;
@@ -723,8 +824,7 @@ function renderizarHistoricoPedidos() {
             day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit"
         });
         const itensHtml = pedido.itens.map(function (item) {
-            const tamanho = item.tamanho ? ` (${item.tamanho})` : "";
-            return `<span>${item.qtd}x ${item.nome}${tamanho}</span>`;
+            return `<span>${descreverItemPedido(item)}</span>`;
         }).join("");
 
         return `

@@ -38,15 +38,25 @@
     <div class="wrap">
         <p class="eyebrow">Cardápio</p>
         <h1>Monte seu <em>pedido.</em></h1>
-        <p>Use a busca pra achar rapidinho o que quer, ou navegue pelas categorias. Ajuste as quantidades e, quando terminar, toque em "Fazer pedido" lá embaixo.</p>
+        <p>Escolha o que você quer pedir, depois a quantidade e o sabor. Quando terminar, toque em "Fazer pedido" lá embaixo.</p>
     </div>
 </section>
 
 <section class="menu-section">
     <div class="wrap">
 
-        <!-- Aba inicial: escolher entre pizza de sabor único ou misturar sabores -->
-        <div id="pizza-hub" class="pizza-hub">
+        <!-- Hub principal: escolher o tipo de alimento -->
+        <div id="alimento-hub" class="pizza-hub">
+            <div class="pizza-hub-head">
+                <p class="eyebrow">Cardápio</p>
+                <h2>O que você quer pedir?</h2>
+            </div>
+            <div class="alimento-grid" id="alimento-grid"></div>
+        </div>
+
+        <!-- Aba pizza: escolher entre pizza de sabor único ou misturar sabores -->
+        <div id="pizza-hub" class="pizza-hub modo-oculto">
+            <button type="button" class="voltar-hub" onclick="voltarAlimentoHub()">← Voltar</button>
             <div class="pizza-hub-head">
                 <p class="eyebrow">Pizzas</p>
                 <h2>Como você quer montar sua pizza?</h2>
@@ -83,23 +93,12 @@
             <div id="mistura-container"></div>
         </div>
 
-    </div>
-</section>
-
-<section class="menu-section menu-section-outras">
-    <div class="wrap">
-        <div class="menu-section-head">
-            <p class="eyebrow">Mais do cardápio</p>
-            <h2>Bordas, calzones, bebidas e mais</h2>
+        <!-- Uma categoria só por vez (mini-pizza, pastel, bebida, etc) -->
+        <div id="categoria-unica" class="modo-oculto">
+            <button type="button" class="voltar-hub" onclick="voltarAlimentoHub()">← Voltar</button>
+            <div id="cardapio-container"></div>
         </div>
 
-        <div class="busca-wrap">
-            <input type="search" id="busca-cardapio" placeholder="Buscar no resto do cardápio... (ex: pastel, refrigerante, borda)">
-        </div>
-
-        <nav class="cat-nav" id="cardapio-nav" aria-label="Outras categorias do cardápio"></nav>
-
-        <div id="cardapio-container"></div>
     </div>
 </section>
 

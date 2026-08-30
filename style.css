@@ -1,13 +1,13 @@
 /* ===================================================================
    Pizzaria do Gordo — Design System
-   Fogo de chão, massa de forno à lenha: quente, artesanal, sem pressa.
+   Fogo de chão, massa fresquinha: quente, artesanal, sem pressa.
    =================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,900;1,9..144,600;1,9..144,900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 :root{
   /* --- paleta: brasas do forno --- */
-  --charcoal:      #241408;   /* interior do forno à lenha */
+  --charcoal:      #241408;   /* tom de brasa, quente e aconchegante */
   --charcoal-2:     #35200e;  /* madeira queimada, um tom acima */
   --charcoal-3:     #472c15;  /* borda / hover sobre escuro */
   --ember:          #e8590c;  /* brasa viva — cor de ação */
@@ -1433,4 +1433,45 @@ html.vt-back::view-transition-new(root){ animation-name: pdg-slide-in-rev; }
 }
 @media (max-width: 400px){
   .wrap{ padding: 0 18px; }
+}
+
+/* ===================================================================
+   HUB DE ALIMENTOS — tela inicial do cardápio (escolher o que pedir)
+   =================================================================== */
+.alimento-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+.alimento-botao{
+  text-align: left;
+  background: var(--paper);
+  border: 2px solid rgba(42,22,8,.1);
+  border-radius: 14px;
+  padding: 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.alimento-botao:hover{
+  border-color: var(--ember);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px -16px rgba(42,22,8,.35);
+}
+.alimento-botao-titulo{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.alimento-botao-desc{
+  font-family: var(--font-mono);
+  font-size: .76rem;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 640px){
+  .alimento-grid{ grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .alimento-botao{ padding: 16px; }
 }
