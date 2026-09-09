@@ -913,8 +913,44 @@ button{
 }
 
 /* ===================================================================
-   AVALIAÇÕES — em manutenção
+   AVALIAÇÕES
    =================================================================== */
+.avaliacoes-hero{ background:var(--charcoal); color:var(--paper); padding:82px 0 112px; }
+.avaliacoes-hero .eyebrow{ color:var(--ember-light); margin-bottom:16px; }
+.avaliacoes-hero h1{ font-family:var(--font-display); font-size:clamp(2.2rem,5vw,4rem); line-height:1; font-weight:900; }
+.avaliacoes-hero h1 em{ color:var(--gold); font-weight:600; }
+.avaliacoes-hero p:last-child{ color:var(--cream-2); max-width:52ch; margin-top:18px; }
+.avaliacoes-page{ background:var(--cream); padding:0 0 88px; }
+.avaliacoes-resumo{ transform:translateY(-42px); background:var(--paper); border-radius:var(--radius); padding:23px 28px; display:flex; align-items:center; justify-content:space-between; gap:24px; box-shadow:0 18px 40px -24px rgba(42,22,8,.4); }
+.nota-destaque{ display:flex; align-items:center; gap:16px; }
+.nota-destaque strong{ font-family:var(--font-display); color:var(--tomato); font-size:3rem; line-height:1; }
+.nota-destaque p,.fonte-google{ margin:3px 0 0; color:var(--ink-soft); font-size:.84rem; }
+.fonte-google{ max-width:45ch; text-align:right; }
+.fonte-google a{ color:var(--ember); font-weight:700; }
+.estrelas{ display:block; color:var(--gold); font-size:1rem; letter-spacing:2px; line-height:1.2; }
+.avaliacoes-conteudo{ display:grid; grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr); gap:46px; align-items:start; }
+.secao-titulo .eyebrow,.form-avaliacao-card .eyebrow{ color:var(--tomato); margin-bottom:10px; }
+.secao-titulo h2,.form-avaliacao-card h2{ font-family:var(--font-display); font-weight:800; color:var(--ink); font-size:1.65rem; }
+.avaliacoes-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:24px; }
+.avaliacao-card{ background:var(--paper); border-radius:14px; padding:22px; box-shadow:0 10px 26px -18px rgba(42,22,8,.28); }
+.avaliacao-topo{ display:flex; align-items:center; gap:10px; }
+.avaliacao-topo strong{ display:block; color:var(--ink); font-size:.94rem; }
+.avatar{ width:36px; height:36px; display:grid; place-items:center; border-radius:50%; background:var(--cream-2); color:var(--ember); font-family:var(--font-display); font-weight:800; }
+.avaliacao-card > p{ color:var(--ink); margin:17px 0 13px; line-height:1.6; font-size:.96rem; }
+.avaliacao-card small{ color:var(--ink-soft); font-family:var(--font-mono); font-size:.68rem; }
+.form-avaliacao-card{ background:var(--paper); border-radius:var(--radius); padding:28px; box-shadow:0 18px 40px -24px rgba(42,22,8,.4); }
+.form-intro{ color:var(--ink-soft); font-size:.92rem; margin:9px 0 22px; }
+#form-avaliacao label,#form-avaliacao legend{ display:block; font-family:var(--font-mono); font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin:18px 0 7px; }
+#form-avaliacao input[type="text"],#form-avaliacao textarea{ width:100%; border:1px solid rgba(42,22,8,.2); border-radius:10px; padding:11px 12px; font:inherit; color:var(--ink); background:var(--cream); resize:vertical; }
+#form-avaliacao input:focus,#form-avaliacao textarea:focus{ outline:2px solid var(--ember); outline-offset:1px; }
+.campo-nota{ margin:18px 0 0; padding:0; border:0; }
+.campo-nota legend{ margin:0 0 7px !important; }
+.seletor-estrelas{ display:flex; flex-direction:row-reverse; justify-content:flex-end; gap:3px; }
+.seletor-estrelas input{ position:absolute; opacity:0; }
+.seletor-estrelas label{ margin:0 !important; color:#cbbfae !important; font-family:inherit !important; font-size:2rem !important; line-height:1; letter-spacing:0 !important; cursor:pointer; transition:color .15s ease,transform .15s ease; }
+.seletor-estrelas input:checked ~ label,.seletor-estrelas label:hover,.seletor-estrelas label:hover ~ label{ color:var(--gold) !important; transform:scale(1.06); }
+#form-avaliacao .btn{ margin-top:22px; }
+.feedback-avaliacao{ min-height:1.3em; margin:12px 0 0; color:var(--ember); font-size:.88rem; font-weight:600; }
 .maintenance{
   background: var(--charcoal);
   min-height: 56vh;
@@ -970,10 +1006,15 @@ button{
 
 @media (max-width: 900px){
   .contato-grid .wrap, .contato-endereco .wrap{ grid-template-columns: 1fr; }
+  .avaliacoes-conteudo{ grid-template-columns:1fr; }
 }
 @media (max-width: 640px){
   .menu-item{ padding: 14px 18px; }
   .page-hero{ padding: 56px 0 52px; }
+  .avaliacoes-hero{ padding:62px 0 90px; }
+  .avaliacoes-resumo{ margin:0 16px; transform:translateY(-30px); display:block; }
+  .fonte-google{ text-align:left; margin-top:14px; }
+  .avaliacoes-grid{ grid-template-columns:1fr; }
 }
 @media (max-width: 980px){
   .hero .wrap, .sobre .wrap, .horarios .wrap, .local .wrap{

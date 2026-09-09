@@ -112,6 +112,8 @@
             padding: 30px 0;
             text-align:center;
         }
+        .admin-secao-titulo{ margin:48px 0 16px; font-family:var(--font-display); font-weight:800; font-size:1.35rem; color:var(--ink); }
+        .avaliacao-admin-comentario{ margin:10px 0 0; color:var(--ink); line-height:1.55; white-space:pre-wrap; }
     </style>
 </head>
 <body>
@@ -153,6 +155,10 @@
         </div>
         <div class="lista-pedidos" id="lista-pedidos">
             <p class="carregando">Carregando pedidos...</p>
+        </div>
+        <h2 class="admin-secao-titulo">Avaliações recebidas</h2>
+        <div class="lista-pedidos" id="lista-avaliacoes">
+            <p class="carregando">Carregando avaliações...</p>
         </div>
     </div>
 
@@ -257,6 +263,7 @@
 
         const container = document.getElementById("lista-pedidos");
         container.innerHTML = '<p class="carregando">Carregando pedidos...</p>';
+        mostrarAvaliacoes();
 
         try {
             const resp = await fetch(`${SUPABASE_URL}/rest/v1/pedidos?select=*&order=criado_em.desc`, {
@@ -312,6 +319,63 @@
         } catch (e) {
             container.innerHTML = '<p class="vazio">Não consegui carregar os pedidos agora.</p>';
         }
+    }
+
+    async function mostrarAvaliacoes() {
+        const token = sessionStorage.getItem("admin-token");
+        const container = document.getElementById("lista-avaliacoes");
+        if (!token || !container) return;
+        container.innerHTML = '<p class="carregando">Carregando avaliações...</p>';
+        try {
+            const resp = await fetch(`${SUPABASE_URL}/rest/v1/avaliacoes?select=*&order=criado_em.desc`, {
+                headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` }
+            });
+            if (!resp.ok) throw new Error("Não foi possível carregar.");
+            const avaliacoes = await resp.json();
+            if (avaliacoes.length === 0) {
+                container.innerHTML = '<p class="vazio">Nenhuma avaliação recebida ainda.</p>';
+                return;
+            }
+            container.innerHTML = "";
+            avaliacoes.forEach(function (avaliacao) {
+                const div = document.createElement("div");
+                div.className = "pedido-card" + (avaliacao.status === "aprovada" ? " atendido" : "");
+                const topo = document.createElement("div");
+                topo.className = "pedido-topo";
+                const nome = document.createElement("strong");
+                nome.textContent = `${avaliacao.nome} — ${"★".repeat(avaliacao.nota)}${"☆".repeat(5 - avaliacao.nota)}`;
+                const status = document.createElement("span");
+                status.className = `status-pill status-${avaliacao.status === "aprovada" ? "atendido" : "pendente"}`;
+                status.textContent = avaliacao.status;
+                topo.append(nome, status);
+                const comentario = document.createElement("p");
+                comentario.className = "avaliacao-admin-comentario";
+                comentario.textContent = avaliacao.comentario;
+                div.append(topo, comentario);
+                if (avaliacao.status === "pendente") {
+                    const acoes = document.createElement("div");
+                    acoes.className = "pedido-acoes";
+                    const botao = document.createElement("button");
+                    botao.textContent = "Aprovar e publicar";
+                    botao.addEventListener("click", function () { aprovarAvaliacao(avaliacao.id); });
+                    acoes.appendChild(botao);
+                    div.appendChild(acoes);
+                }
+                container.appendChild(div);
+            });
+        } catch (e) {
+            container.innerHTML = '<p class="vazio">Não consegui carregar as avaliações agora. Rode o novo schema do Supabase.</p>';
+        }
+    }
+
+    async function aprovarAvaliacao(id) {
+        const token = sessionStorage.getItem("admin-token");
+        await fetch(`${SUPABASE_URL}/rest/v1/avaliacoes?id=eq.${id}`, {
+            method: "PATCH",
+            headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}`, "Content-Type": "application/json", Prefer: "return=minimal" },
+            body: JSON.stringify({ status: "aprovada" })
+        });
+        mostrarAvaliacoes();
     }
 
     async function marcarAtendido(id) {

@@ -776,6 +776,109 @@ function copiarHistoricoCompleto(botao) {
     copiarTexto(texto, botao);
 }
 
+// ---------------------------------------------------------------------
+// Avaliações — carregamos somente as que já foram aprovadas. O envio
+// fica pendente para que o dono possa moderar antes de publicar.
+// ---------------------------------------------------------------------
+function supabaseConfigurado() {
+    return (
+        typeof SUPABASE_URL !== "undefined" &&
+        typeof SUPABASE_ANON_KEY !== "undefined" &&
+        !SUPABASE_URL.includes("COLE_AQUI") &&
+        !SUPABASE_ANON_KEY.includes("COLE_AQUI")
+    );
+}
+
+function criarCardAvaliacao(avaliacao) {
+    const card = document.createElement("article");
+    card.className = "avaliacao-card";
+
+    const topo = document.createElement("div");
+    topo.className = "avaliacao-topo";
+    const avatar = document.createElement("span");
+    avatar.className = "avatar";
+    avatar.textContent = avaliacao.nome.trim().charAt(0).toUpperCase();
+    const info = document.createElement("div");
+    const nome = document.createElement("strong");
+    nome.textContent = avaliacao.nome;
+    const estrelas = document.createElement("span");
+    estrelas.className = "estrelas";
+    estrelas.setAttribute("aria-label", `${avaliacao.nota} de 5 estrelas`);
+    estrelas.textContent = "★".repeat(avaliacao.nota) + "☆".repeat(5 - avaliacao.nota);
+    info.append(nome, estrelas);
+    topo.append(avatar, info);
+
+    const comentario = document.createElement("p");
+    comentario.textContent = `“${avaliacao.comentario}”`;
+    const legenda = document.createElement("small");
+    legenda.textContent = "Avaliação enviada pelo site";
+    card.append(topo, comentario, legenda);
+    return card;
+}
+
+async function carregarAvaliacoes() {
+    const container = document.getElementById("avaliacoes-publicadas");
+    if (!container || !supabaseConfigurado()) return;
+
+    try {
+        const resposta = await fetch(`${SUPABASE_URL}/rest/v1/avaliacoes?select=nome,nota,comentario&status=eq.aprovada&order=criado_em.desc&limit=12`, {
+            headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+        });
+        if (!resposta.ok) return;
+        const avaliacoes = await resposta.json();
+        avaliacoes.forEach(function (avaliacao) {
+            container.appendChild(criarCardAvaliacao(avaliacao));
+        });
+    } catch (erro) {
+        console.warn("Não consegui carregar as avaliações enviadas pelo site:", erro);
+    }
+}
+
+function configurarFormularioAvaliacao() {
+    const form = document.getElementById("form-avaliacao");
+    if (!form) return;
+
+    form.addEventListener("submit", async function (evento) {
+        evento.preventDefault();
+        const feedback = document.getElementById("feedback-avaliacao");
+        const botao = form.querySelector('button[type="submit"]');
+        const dados = new FormData(form);
+        const avaliacao = {
+            nome: dados.get("nome").trim(),
+            nota: Number(dados.get("nota")),
+            comentario: dados.get("comentario").trim(),
+            status: "pendente"
+        };
+
+        if (!supabaseConfigurado()) {
+            feedback.textContent = "O envio de avaliações ainda não foi configurado. Fale com a pizzaria pelo WhatsApp.";
+            return;
+        }
+
+        botao.disabled = true;
+        feedback.textContent = "Enviando sua avaliação...";
+        try {
+            const resposta = await fetch(`${SUPABASE_URL}/rest/v1/avaliacoes`, {
+                method: "POST",
+                headers: {
+                    apikey: SUPABASE_ANON_KEY,
+                    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+                    "Content-Type": "application/json",
+                    Prefer: "return=minimal"
+                },
+                body: JSON.stringify([avaliacao])
+            });
+            if (!resposta.ok) throw new Error("Não foi possível salvar a avaliação.");
+            form.reset();
+            feedback.textContent = "Obrigado! Sua avaliação foi recebida e será publicada após aprovação.";
+        } catch (erro) {
+            feedback.textContent = "Não foi possível enviar agora. Tente novamente em alguns minutos.";
+        } finally {
+            botao.disabled = false;
+        }
+    });
+}
+
 // Pega um pedido antigo do histórico e recoloca no carrinho, pra o
 // cliente poder ajustar e enviar de novo sem digitar tudo outra vez.
 function repetirPedido(indice) {
@@ -848,6 +951,8 @@ window.onload = function () {
     renderizarResumoPedido();
     configurarBotaoWhatsappPedido();
     renderizarHistoricoPedidos();
+    carregarAvaliacoes();
+    configurarFormularioAvaliacao();
 };
 
 // ---------------------------------------------------------------------

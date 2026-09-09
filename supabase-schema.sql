@@ -45,6 +45,29 @@ create policy "só admin logado pode atualizar pedidos"
     using (true);
 
 -- ===================================================================
+-- AVALIAÇÕES — clientes enviam; o dono aprova antes de publicar
+-- ===================================================================
+create table if not exists avaliacoes (
+    id          bigint generated always as identity primary key,
+    criado_em   timestamptz not null default now(),
+    nome        text not null check (char_length(nome) between 2 and 60),
+    nota        smallint not null check (nota between 1 and 5),
+    comentario  text not null check (char_length(comentario) between 10 and 800),
+    status      text not null default 'pendente' check (status in ('pendente', 'aprovada'))
+);
+
+alter table avaliacoes enable row level security;
+
+drop policy if exists "qualquer um pode enviar avaliação" on avaliacoes;
+create policy "qualquer um pode enviar avaliação" on avaliacoes for insert to anon with check (status = 'pendente');
+drop policy if exists "visitantes veem avaliações aprovadas" on avaliacoes;
+create policy "visitantes veem avaliações aprovadas" on avaliacoes for select to anon using (status = 'aprovada');
+drop policy if exists "admin vê avaliações" on avaliacoes;
+create policy "admin vê avaliações" on avaliacoes for select to authenticated using (true);
+drop policy if exists "admin aprova avaliações" on avaliacoes;
+create policy "admin aprova avaliações" on avaliacoes for update to authenticated using (true) with check (true);
+
+-- ===================================================================
 -- Depois de rodar isso, crie o usuário do dono da pizzaria em:
 -- Authentication > Users > Add user (defina um e-mail e senha).
 -- É esse e-mail/senha que ele vai usar pra entrar em admin.html

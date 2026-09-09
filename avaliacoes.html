@@ -34,14 +34,71 @@
     </div>
 </header>
 
-<section class="maintenance">
-    <div class="maintenance-card">
-        <span class="maintenance-icon">🛠️</span>
-        <h1>Área em <em>manutenção.</em></h1>
-        <p>Estamos preparando um jeito fácil de você deixar sua avaliação por aqui. Enquanto isso, manda seu feedback direto pra gente no WhatsApp!</p>
-        <a href="https://wa.me/5517997795847" target="_blank"><button class="btn btn-primary">Falar no WhatsApp</button></a>
+<section class="avaliacoes-hero">
+    <div class="wrap">
+        <p class="eyebrow">A opinião de quem provou</p>
+        <h1>Seu feedback faz<br><em>parte da receita.</em></h1>
+        <p>Conta pra gente como foi sua experiência. Cada avaliação ajuda a Pizzaria do Gordo a ficar ainda melhor.</p>
     </div>
 </section>
+
+<main class="avaliacoes-page">
+    <section class="avaliacoes-resumo wrap">
+        <div class="nota-destaque">
+            <strong>4,5</strong>
+            <div>
+                <span class="estrelas" aria-label="4,5 de 5 estrelas">★★★★★</span>
+                <p>317 avaliações públicas</p>
+            </div>
+        </div>
+        <p class="fonte-google">Dados exibidos como exemplo a partir de avaliações públicas no Google. <a href="https://www.google.com/maps/search/?api=1&amp;query=Pizzaria+do+Gordo+Novo+Horizonte+SP" target="_blank" rel="noopener">Ver no Google</a></p>
+    </section>
+
+    <section class="avaliacoes-conteudo wrap">
+        <div>
+            <div class="secao-titulo">
+                <p class="eyebrow">Quem já passou por aqui</p>
+                <h2>Comentários de clientes</h2>
+            </div>
+            <div class="avaliacoes-grid" id="avaliacoes-publicadas">
+                <article class="avaliacao-card">
+                    <div class="avaliacao-topo"><span class="avatar">G</span><div><strong>Cliente no Google</strong><span class="estrelas" aria-label="5 estrelas">★★★★★</span></div></div>
+                    <p>“Lugar maravilhoso, com ótimo atendimento.”</p>
+                    <small>Avaliação pública no Google</small>
+                </article>
+                <article class="avaliacao-card">
+                    <div class="avaliacao-topo"><span class="avatar">C</span><div><strong>Cliente no Google</strong><span class="estrelas" aria-label="5 estrelas">★★★★★</span></div></div>
+                    <p>“Uma ótima opção para jantar.”</p>
+                    <small>Avaliação pública no Google</small>
+                </article>
+            </div>
+        </div>
+
+        <aside class="form-avaliacao-card">
+            <p class="eyebrow">Deixe sua opinião</p>
+            <h2>Como foi seu pedido?</h2>
+            <p class="form-intro">Sua avaliação será enviada para análise antes de aparecer no site.</p>
+            <form id="form-avaliacao">
+                <label for="avaliacao-nome">Seu nome</label>
+                <input id="avaliacao-nome" name="nome" type="text" maxlength="60" required autocomplete="name" placeholder="Como quer ser identificado?">
+                <fieldset class="campo-nota">
+                    <legend>Sua nota</legend>
+                    <div class="seletor-estrelas" aria-label="Escolha uma nota de 1 a 5 estrelas">
+                        <input type="radio" id="nota-5" name="nota" value="5" required><label for="nota-5" title="5 estrelas">★</label>
+                        <input type="radio" id="nota-4" name="nota" value="4"><label for="nota-4" title="4 estrelas">★</label>
+                        <input type="radio" id="nota-3" name="nota" value="3"><label for="nota-3" title="3 estrelas">★</label>
+                        <input type="radio" id="nota-2" name="nota" value="2"><label for="nota-2" title="2 estrelas">★</label>
+                        <input type="radio" id="nota-1" name="nota" value="1"><label for="nota-1" title="1 estrela">★</label>
+                    </div>
+                </fieldset>
+                <label for="avaliacao-comentario">Conte pra gente</label>
+                <textarea id="avaliacao-comentario" name="comentario" rows="5" minlength="10" maxlength="800" required placeholder="O que você achou da comida e do atendimento?"></textarea>
+                <button type="submit" class="btn btn-primary">Enviar avaliação</button>
+                <p class="feedback-avaliacao" id="feedback-avaliacao" role="status" aria-live="polite"></p>
+            </form>
+        </aside>
+    </section>
+</main>
 
 <footer class="site-footer">
     <div class="wrap">
@@ -76,6 +133,7 @@
     </div>
 </footer>
 
+<script src="supabase-config.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
